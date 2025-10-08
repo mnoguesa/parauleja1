@@ -213,9 +213,17 @@
         if (!startedAt) setStartedAt(Date.now());
         const target = currentEntry.paraula;
         const ok = isCorrect(target, input);
-        setStates(prev => ({ ...prev, [currentLetter]: ok ? "correct" : "wrong" }));
-        setInput("");
-        goNext(currentIndex);
+	  setStates(prev => {
+		const updated = { ...prev, [currentLetter]: ok ? "correct" : "wrong" };
+		if (Object.values(updated).every(s => s !== "pending")) {
+		  setFinished(true);
+		} else {
+		  goNext(currentIndex);
+		}
+		return updated;
+	  });
+
+	  setInput("");
       }
 
       function pass() {
